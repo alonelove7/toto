@@ -26,7 +26,9 @@ def get_file_name(message):
 async def download(event):
     
         if (pv := event.is_private) or event.is_group :
-            if pv:
+            if event.sender_id in w.keys():
+                if w[event.sender_id] > time.time() - 1 :
+                await event.reply(f"⛔️امکان ارسال همزمان چند فایل وجود ندارد⛔️")
                 try:
                     user = await event.client(functions.channels.GetParticipantRequest(
                         channel = Config.CHANNEL_USERNAME,
