@@ -24,22 +24,19 @@ def get_file_name(message):
 
 @client.on(events.NewMessage)
 async def download(event):
-    
-        if (pv := event.is_private) or event.is_group :
-            if event.sender_id in w.keys():
-                if w[event.sender_id] > time.time() - 1 :
+    if (pv := event.is_private) or event.is_group :
+        if event.sender_id in w.keys():
+            if w[event.sender_id] > time.time() - 1 :
                 await event.reply(f"⛔️امکان ارسال همزمان چند فایل وجود ندارد⛔️")
-                try:
-                    user = await event.client(functions.channels.GetParticipantRequest(
-                        channel = Config.CHANNEL_USERNAME,
-                        participant = event.sender_id
-                        ))
-                    try :
-                         if user.participant.kicked_by:
-                             return
-                    except:
-                         pass
-                except errors.UserNotParticipantError:
+                return
+        w[event.sender_id] = time.time()
+        if pv:
+            try:
+                await event.client(functions.channels.GetParticipantRequest(
+                    channel = Config.CHANNEL_USERNAME,
+                    participant = event.sender_id
+                    ))
+            except errors.UserNotParticipantError:
                     await event.reply(f"First join to our official channel to access the bot or get the newest news about the bot\n\n@{Config.CHANNEL_USERNAME}\n\nAfter that /start the bot aging.")
                     return
             
